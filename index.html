@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<title>LunaAI</title>
+<style>
+  body { font-family: Arial; margin: 20px; }
+  #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+  #input { width: 80%; }
+</style>
+</head>
+<body>
+  <div id="chat"></div>
+  <input id="input" placeholder="Napisz coś..." />
+  <button onclick="send()">Wyślij</button>
+
+  <script>
+    async function send() {
+      const input = document.getElementById('input');
+      const msg = input.value.trim();
+      if(!msg) return;
+      addMessage('Ty: ' + msg);
+      input.value = '';
+
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({message: msg})
+      });
+      const data = await res.json();
+      addMessage('LunaAI: ' + data.reply);
+    }
+
+    function addMessage(msg) {
+      const chat = document.getElementById('chat');
+      chat.innerHTML += `<div>${msg}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
